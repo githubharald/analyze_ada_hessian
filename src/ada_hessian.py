@@ -1,5 +1,6 @@
 """
 code taken from: https://github.com/davda54/ada-hessian
+Copyright (c) 2020 David Samuel
 """
 
 import torch
