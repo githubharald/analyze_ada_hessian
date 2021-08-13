@@ -1,13 +1,24 @@
-import torch
-from ada_hessian import AdaHessian
+from typing import Callable, List
+
 import numpy as np
+import torch
+
+from ada_hessian import AdaHessian
 
 
-def optimize(f, v0, num_iter, lr, bg, bh, k, num_samples):
+def optimize(f: Callable,
+             v0: List[float],
+             num_iter: int,
+             lr: float,
+             bg: float,
+             bh: float,
+             k: float,
+             num_samples: int) -> np.ndarray:
     """
-    optimize function f(v) with start value v0=(x0, y0) and num_iter iterations
-    num_samples specifies the number of H*v products used to approx. Hessian diagonal elements per step
-    other parameter: learning rate (lr), beta for gradient (bg), beta for Hessian (bg), Hessian Power (k)
+    Optimize function f(v) with start value v0=(x0, y0) and num_iter iterations.
+    num_samples specifies the number of H*v products used to approximate Hessian diagonal elements per step.
+    Other parameters: learning rate (lr), beta for gradient (bg), beta for Hessian (bg), Hessian Power (k).
+    See AdaHessian paper for details.
     """
     torch.manual_seed(0)
 
@@ -23,7 +34,7 @@ def optimize(f, v0, num_iter, lr, bg, bh, k, num_samples):
         optimizer.zero_grad()
 
         # add current value to path
-        print(f'#{i}: v={v}')
+        print(f'#{i}: v={v.data}')
         path.append(v.clone().detach().numpy())
 
     return np.stack(path)

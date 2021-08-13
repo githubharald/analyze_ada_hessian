@@ -1,10 +1,12 @@
-import numpy as np
+from typing import Callable, List
+
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 
 
-def plot_function(f, window):
-    "plot 2d function by executing the PyTorch function for each grid point"
+def plot_function(f: Callable, window: List[float]) -> None:
+    """Plot 2D function by executing the PyTorch function for each grid point."""
     num_vals = 50
     x_vals = np.linspace(window[0], window[1], num_vals)
     y_vals = np.linspace(window[2], window[3], num_vals)
@@ -19,16 +21,16 @@ def plot_function(f, window):
     plt.pcolormesh(X, Y, Z, cmap='rainbow', shading='auto')
 
 
-def plot_path(path):
-    "plot steps taken by optimizer"
+def plot_path(path: np.ndarray) -> None:
+    """Plot steps taken by optimizer."""
     plt.plot(path[:, 0], path[:, 1], 'r-')
     plt.plot(path[:, 0], path[:, 1], 'r.')
     plt.plot(path[0, 0], path[0, 1], 'k^', label='start')
     plt.plot(path[-1, 0], path[-1, 1], 'k*', label='last')
 
 
-def show_plot():
-    "show plot with colorbar and legend"
+def show_plot() -> None:
+    """Show plot with colorbar and legend."""
     plt.colorbar()
     plt.legend()
     plt.show()

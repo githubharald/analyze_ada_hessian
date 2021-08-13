@@ -1,5 +1,5 @@
 """
-code taken from: https://github.com/davda54/ada-hessian
+Code taken from: https://github.com/davda54/ada-hessian
 Copyright (c) 2020 David Samuel
 """
 
@@ -21,7 +21,8 @@ class AdaHessian(torch.optim.Optimizer):
         n_samples (int, optional) -- how many times to sample `z` for the approximation of the hessian trace (default: 1)
     """
 
-    def __init__(self, params, lr=0.1, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0, hessian_power=1.0, update_each=1, n_samples=1):
+    def __init__(self, params, lr=0.1, betas=(0.9, 0.999), eps=1e-8, weight_decay=0.0, hessian_power=1.0, update_each=1,
+                 n_samples=1):
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= eps:
@@ -83,8 +84,10 @@ class AdaHessian(torch.optim.Optimizer):
         grads = [p.grad for p in params]
 
         for i in range(self.n_samples):
-            zs = [torch.randint(0, 2, p.size(), generator=self.generator, device=p.device) * 2.0 - 1.0 for p in params]  # Rademacher distribution {-1.0, 1.0}
-            h_zs = torch.autograd.grad(grads, params, grad_outputs=zs, only_inputs=True, retain_graph=i < self.n_samples - 1)
+            zs = [torch.randint(0, 2, p.size(), generator=self.generator, device=p.device) * 2.0 - 1.0 for p in
+                  params]  # Rademacher distribution {-1.0, 1.0}
+            h_zs = torch.autograd.grad(grads, params, grad_outputs=zs, only_inputs=True,
+                                       retain_graph=i < self.n_samples - 1)
             for h_z, z, p in zip(h_zs, zs, params):
                 p.hess += h_z * z / self.n_samples  # approximate the expected values of z*(H@z)
 
@@ -117,7 +120,8 @@ class AdaHessian(torch.optim.Optimizer):
                 if len(state) == 1:
                     state['step'] = 0
                     state['exp_avg'] = torch.zeros_like(p.data)  # Exponential moving average of gradient values
-                    state['exp_hessian_diag_sq'] = torch.zeros_like(p.data)  # Exponential moving average of Hessian diagonal square values
+                    state['exp_hessian_diag_sq'] = torch.zeros_like(
+                        p.data)  # Exponential moving average of Hessian diagonal square values
 
                 exp_avg, exp_hessian_diag_sq = state['exp_avg'], state['exp_hessian_diag_sq']
                 beta1, beta2 = group['betas']

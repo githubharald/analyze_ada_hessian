@@ -1,22 +1,24 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
 import argparse
+from typing import Callable
 
-from ada_hessian import AdaHessian
-from plot import plot_path, plot_function, show_plot
+# noinspection PyUnresolvedReferences
+import torch
+
 from optimize import optimize
+from plot import plot_path, plot_function, show_plot
 
 
-def make_func(s):
-    "parse the passed function string"
+def make_func(s: str) -> Callable:
+    """Parse the function that was given as a string via command line."""
+
     def func(v):
         return eval(s)
+
     return func
 
 
-def parse_args():
-    "parse command line arguments"
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     ap = argparse.ArgumentParser()
     ap.add_argument('--func', required=False, type=str, default='10*v[0]**2 + v[1]**4')
     ap.add_argument('--num_iter', required=False, type=int, default=10)
@@ -28,7 +30,6 @@ def parse_args():
     ap.add_argument('--hessian_pow', required=False, type=float, default=1)
     ap.add_argument('--num_samples', required=False, type=int, default=1)
 
-
     parsed = ap.parse_args()
 
     assert len(parsed.start) == 2
@@ -39,19 +40,18 @@ def parse_args():
 
 
 def main():
-
     # parse command line arguments and parse function
     parsed = parse_args()
     func = make_func(parsed.func)
 
     # optimize 2d parameter vector v of function
-    path = optimize(func, parsed.start, parsed.num_iter, parsed.lr, parsed.beta_g, parsed.beta_h, parsed.hessian_pow, parsed.num_samples)
+    path = optimize(func, parsed.start, parsed.num_iter, parsed.lr, parsed.beta_g, parsed.beta_h, parsed.hessian_pow,
+                    parsed.num_samples)
 
     # plot function and steps of optimizer
     plot_function(func, parsed.window)
     plot_path(path)
     show_plot()
-
 
 
 if __name__ == '__main__':
